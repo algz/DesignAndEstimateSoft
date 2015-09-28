@@ -190,14 +190,20 @@ namespace WeightCenterDesignAndEstimateSoft.Tool.GenerateReport
                 MessageBox.Show("名称不能为空.");
                 return;
             }
+            else if(this.digitBitTxt.Text=="")
+            {
+                MessageBox.Show("请输入有效位数.");
+                return;
+            }
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Filter = "Word 文档(*.docx)|*.docx";
             sfd.FilterIndex = 1;
             sfd.InitialDirectory = @"c:\";
             sfd.FileName = this.reportNameTxt.Text+".docx";
+            List<WeightData> wdList =(List<WeightData>)this.weightCategoryTreeView.Tag;
             if (sfd.ShowDialog() == DialogResult.OK)
             {
-                if (WordProcess.generateWordFile(sfd.FileName, this.reportDatas, this.weightFormulaData, this.coreEnvelopeFormulaData, getWeightCategoryPic(null)))
+                if (WordProcess.generateWordFile(sfd.FileName, this.reportDatas, this.weightFormulaData, this.coreEnvelopeFormulaData, Common.getWeightCategoryPic(wdList),Convert.ToInt32(this.digitBitTxt.Text)))
                 {
                     MessageBox.Show("文档生成完成.");
                 };
@@ -536,7 +542,7 @@ namespace WeightCenterDesignAndEstimateSoft.Tool.GenerateReport
             CheckedListBox box = (CheckedListBox)sender;
 
                 List<WeightData> wdList = this.bindWeightCategory(box);
-                if (wdList == null)
+                if (wdList == null||wdList.Count==0)
                 {
                     return;
                 }
@@ -559,6 +565,8 @@ namespace WeightCenterDesignAndEstimateSoft.Tool.GenerateReport
             #region 3.2.1计算公式
 
             WeightArithmetic wa = (WeightArithmetic)box.CheckedItems[0];
+            reportDatas[2][0].Remark = wa.Remark;//算法备注
+            
             this.weightFormulaData = new FormulaData[wa.FormulaList.Count];
             for (int i = 0; i < wa.FormulaList.Count; i++)
             {
@@ -617,7 +625,7 @@ namespace WeightCenterDesignAndEstimateSoft.Tool.GenerateReport
         }
 
         /// <summary>
-        /// 纵向纵心
+        /// 纵向重心
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -630,16 +638,18 @@ namespace WeightCenterDesignAndEstimateSoft.Tool.GenerateReport
                 this.reportDatas[5] = null;
                 return;
             }
-            List<NodeFormula> nfList = ((CoreEnvelopeArithmetic)box.CheckedItems[0]).FormulaList;
+            CoreEnvelopeArithmetic cea=(CoreEnvelopeArithmetic)box.CheckedItems[0];
+            List<NodeFormula> nfList = cea.FormulaList;
             this.coreEnvelopeFormulaData = new FormulaData[nfList.Count];
             this.reportDatas[5] = new ReportData[1];
             this.reportDatas[5][0] = new ReportData();
             this.reportDatas[5][0].topMargin = this.reportDatas[5][0].bottomMargin = nfList[0].XFormula.Value.ToString();
+            this.reportDatas[5][0].Remark = cea.Remark;//公式算法
             for (int i = 0; i < nfList.Count;i++ )
             {
                 NodeFormula nf = nfList[i];
                 this.coreEnvelopeFormulaData[i] = new FormulaData();
-
+                this.coreEnvelopeFormulaData[i].MainTile = nf.NodeName;
                 string errmsg;
                 ZstExpression.CExpression expr = ZstExpression.CExpression.Parse(nf.XFormula.Formula, out errmsg);
                 if (expr != null)
@@ -689,6 +699,7 @@ namespace WeightCenterDesignAndEstimateSoft.Tool.GenerateReport
             
                 this.reportDatas[6][i] = new ReportData();
                 this.reportDatas[6][i].name =ia.DataName ;
+                this.reportDatas[6][i].Remark = ia.Remark;//算法备注
                 this.reportDatas[6][i].formulaContent = new FormulaData[ia.FormulaList.Count];
                 for (int j = 0; j < ia.FormulaList.Count; j++)
                 {
@@ -893,6 +904,20 @@ namespace WeightCenterDesignAndEstimateSoft.Tool.GenerateReport
             return wdList;
         }
 
+        /// <summary>
+        /// 绑定重量结构树数据子节点
+        /// </summary>
+        private void BindTreeNode(TreeNode ParentNode, int nParentID, List<WeightData> wdList)
+        {
+            IEnumerable<WeightData> selection = from wd in wdList where wd.nParentID == nParentID select wd;
+            foreach (WeightData wd in selection)
+            {
+                TreeNode node = ParentNode.Nodes.Add(ParentNode.Name + "\\" + wd.weightName, wd.weightName);
+                node.ToolTipText = wd.strRemark;
+
+                BindTreeNode(node, wd.nID, wdList);
+            }
+        }
 
         /// <summary>
         /// 绑定重量分类结构树数据
@@ -908,14 +933,23 @@ namespace WeightCenterDesignAndEstimateSoft.Tool.GenerateReport
 
             if (tree.Nodes.Count == 0)
             {
-
-                IEnumerable<WeightData> selection = from wd in wdList where wd.nParentID == -1 || wd.nParentID == 0 select wd;
-                this.reportDatas[0] = new ReportData[selection.Count()];
-
                 //窗口加载树结点
                 tree.Nodes.Clear();
-                TreeNode rootNode = new TreeNode("重量分类");
-                tree.Nodes.Add(rootNode);
+                //TreeNode rootNode = new TreeNode("重量分类");
+                //tree.Nodes.Add(rootNode);
+                IEnumerable<WeightData> selection = from wd in wdList where wd.nParentID == -1 select wd;
+                foreach (WeightData wd in selection)
+                {
+                    TreeNode node = tree.Nodes.Add(wd.weightName, wd.weightName);
+                    node.ToolTipText = wd.strRemark;
+
+                    BindTreeNode(node, wd.nID, wdList);
+                }
+                tree.Tag = wdList;
+                tree.ExpandAll();
+
+                selection = from wd in wdList where wd.nParentID == -1 || wd.nParentID == 0 select wd;
+                this.reportDatas[0] = new ReportData[selection.Count()];
 
                 int j = 0;
                 foreach (WeightData wd in selection)
@@ -923,22 +957,22 @@ namespace WeightCenterDesignAndEstimateSoft.Tool.GenerateReport
                     this.reportDatas[0][j] = new ReportData();
                     this.reportDatas[0][j].name = wd.weightName;
                     j++;
-                    TreeNode node = new TreeNode();
-                    node.Name = wd.weightName;
-                    node.Text = wd.weightName;// +"[" + Math.Round(wd.weightValue, digit).ToString() + " 千克" + "]";
+                    //TreeNode node = new TreeNode();
+                    //node.Name = wd.weightName;
+                    //node.Text = wd.weightName;// +"[" + Math.Round(wd.weightValue, digit).ToString() + " 千克" + "]";
 
-                    if (wd.nParentID == -1)
-                    {
-                        rootNode.Nodes.Add(node);
-                    }
-                    else
-                    {
-                        rootNode.Nodes[0].Nodes.Add(node);
-                    }
+                    //if (wd.nParentID == -1)
+                    //{
+                    //    rootNode.Nodes.Add(node);
+                    //}
+                    //else
+                    //{
+                    //    rootNode.Nodes[0].Nodes.Add(node);
+                    //}
 
                 }
-                tree.Tag = wdList;
-                tree.ExpandAll();
+                //tree.Tag = wdList;
+                //tree.ExpandAll();
             }
             else
             {

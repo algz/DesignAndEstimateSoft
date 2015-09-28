@@ -48,16 +48,18 @@
             this.weightAdjustListBox = new System.Windows.Forms.CheckedListBox();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.clearRealityBtn = new System.Windows.Forms.Button();
+            this.clearEstimateBtn = new System.Windows.Forms.Button();
+            this.importRealityTxt = new System.Windows.Forms.Label();
+            this.importEstimateTxt = new System.Windows.Forms.Label();
             this.importRealityBtn = new System.Windows.Forms.Button();
             this.importEstimateBtn = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.inertiaArithmeticListBox = new System.Windows.Forms.CheckedListBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.coreDesignListBox = new System.Windows.Forms.CheckedListBox();
-            this.importEstimateTxt = new System.Windows.Forms.Label();
-            this.importRealityTxt = new System.Windows.Forms.Label();
-            this.clearEstimateBtn = new System.Windows.Forms.Button();
-            this.clearRealityBtn = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.digitBitTxt = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -133,6 +135,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.digitBitTxt);
+            this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.reportNameTxt);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -331,6 +335,42 @@
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "先进技术因子取值";
             // 
+            // clearRealityBtn
+            // 
+            this.clearRealityBtn.Location = new System.Drawing.Point(89, 129);
+            this.clearRealityBtn.Name = "clearRealityBtn";
+            this.clearRealityBtn.Size = new System.Drawing.Size(75, 23);
+            this.clearRealityBtn.TabIndex = 5;
+            this.clearRealityBtn.Text = "清空实际值";
+            this.clearRealityBtn.UseVisualStyleBackColor = true;
+            this.clearRealityBtn.Click += new System.EventHandler(this.clearEstimateBtn_Click);
+            // 
+            // clearEstimateBtn
+            // 
+            this.clearEstimateBtn.Location = new System.Drawing.Point(89, 19);
+            this.clearEstimateBtn.Name = "clearEstimateBtn";
+            this.clearEstimateBtn.Size = new System.Drawing.Size(75, 23);
+            this.clearEstimateBtn.TabIndex = 4;
+            this.clearEstimateBtn.Text = "清空估算值";
+            this.clearEstimateBtn.UseVisualStyleBackColor = true;
+            this.clearEstimateBtn.Click += new System.EventHandler(this.clearEstimateBtn_Click);
+            // 
+            // importRealityTxt
+            // 
+            this.importRealityTxt.AutoSize = true;
+            this.importRealityTxt.Location = new System.Drawing.Point(7, 155);
+            this.importRealityTxt.Name = "importRealityTxt";
+            this.importRealityTxt.Size = new System.Drawing.Size(0, 12);
+            this.importRealityTxt.TabIndex = 3;
+            // 
+            // importEstimateTxt
+            // 
+            this.importEstimateTxt.AutoSize = true;
+            this.importEstimateTxt.Location = new System.Drawing.Point(7, 50);
+            this.importEstimateTxt.Name = "importEstimateTxt";
+            this.importEstimateTxt.Size = new System.Drawing.Size(0, 12);
+            this.importEstimateTxt.TabIndex = 2;
+            // 
             // importRealityBtn
             // 
             this.importRealityBtn.Location = new System.Drawing.Point(6, 129);
@@ -394,41 +434,22 @@
             this.coreDesignListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBox_ItemCheck);
             this.coreDesignListBox.SelectedIndexChanged += new System.EventHandler(this.coreDesignListBox_SelectedIndexChanged);
             // 
-            // importEstimateTxt
+            // label2
             // 
-            this.importEstimateTxt.AutoSize = true;
-            this.importEstimateTxt.Location = new System.Drawing.Point(7, 50);
-            this.importEstimateTxt.Name = "importEstimateTxt";
-            this.importEstimateTxt.Size = new System.Drawing.Size(0, 12);
-            this.importEstimateTxt.TabIndex = 2;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(181, 10);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(83, 12);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "保留有效位数:";
             // 
-            // importRealityTxt
+            // digitBitTxt
             // 
-            this.importRealityTxt.AutoSize = true;
-            this.importRealityTxt.Location = new System.Drawing.Point(7, 155);
-            this.importRealityTxt.Name = "importRealityTxt";
-            this.importRealityTxt.Size = new System.Drawing.Size(0, 12);
-            this.importRealityTxt.TabIndex = 3;
-            // 
-            // clearEstimateBtn
-            // 
-            this.clearEstimateBtn.Location = new System.Drawing.Point(89, 19);
-            this.clearEstimateBtn.Name = "clearEstimateBtn";
-            this.clearEstimateBtn.Size = new System.Drawing.Size(75, 23);
-            this.clearEstimateBtn.TabIndex = 4;
-            this.clearEstimateBtn.Text = "清空估算值";
-            this.clearEstimateBtn.UseVisualStyleBackColor = true;
-            this.clearEstimateBtn.Click += new System.EventHandler(this.clearEstimateBtn_Click);
-            // 
-            // clearRealityBtn
-            // 
-            this.clearRealityBtn.Location = new System.Drawing.Point(89, 129);
-            this.clearRealityBtn.Name = "clearRealityBtn";
-            this.clearRealityBtn.Size = new System.Drawing.Size(75, 23);
-            this.clearRealityBtn.TabIndex = 5;
-            this.clearRealityBtn.Text = "清空实际值";
-            this.clearRealityBtn.UseVisualStyleBackColor = true;
-            this.clearRealityBtn.Click += new System.EventHandler(this.clearEstimateBtn_Click);
+            this.digitBitTxt.Location = new System.Drawing.Point(270, 7);
+            this.digitBitTxt.Name = "digitBitTxt";
+            this.digitBitTxt.Size = new System.Drawing.Size(20, 21);
+            this.digitBitTxt.TabIndex = 3;
+            this.digitBitTxt.Text = "3";
             // 
             // GenerateReportForm
             // 
@@ -495,5 +516,7 @@
         private System.Windows.Forms.Label importEstimateTxt;
         private System.Windows.Forms.Button clearRealityBtn;
         private System.Windows.Forms.Button clearEstimateBtn;
+        private System.Windows.Forms.TextBox digitBitTxt;
+        private System.Windows.Forms.Label label2;
     }
 }
